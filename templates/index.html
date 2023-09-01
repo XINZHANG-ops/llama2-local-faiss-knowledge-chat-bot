@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        #chatbox {
+            width: 100%;
+            height: 400px;
+            overflow: auto;
+            border: 1px solid black;
+            margin-bottom: 20px;
+        }
+        #config {
+            width: 100%;
+            border: 1px solid black;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        #chatAndConfig {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        #main {
+            width: 90%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .user-font {
+            font-family: 'Arial', sans-serif;
+        }
+        .assistant-font {
+            font-family: 'cursive', serif;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chat</h2>
+    <div id="main">
+        <div id="chatAndConfig">
+            <div id="chatbox">
+                <!-- Messages will appear here -->
+            </div>
+            <div id="config">
+                <h3>Configuration</h3>
+                <label for="session_id">Session ID:</label>
+                <input type="text" id="session_id" name="session_id" value="{{ session['session_id'] }}"><br>
+
+                <label for="system_message">System Message:</label><br>
+                <textarea id="system_message" name="system_message" rows="4" cols="50">{{ session['system_message'] }}</textarea><br>
+
+                <label for="temperature">Temperature:</label>
+                <input type="number" id="temperature" name="temperature" value="{{ session['temperature'] }}" min="0" max="1" step="0.1"><br>
+
+                <label for="max_length">Max Length:</label>
+                <input type="number" id="max_length" name="max_length" value="{{ session['max_length'] }}" min="0" max="2048" step="1"><br>
+
+                <label for="top_k">Top K:</label>
+                <input type="number" id="top_k" name="top_k" value="{{ session['top_k'] }}" min="1" step="1"><br>
+
+                <label for="top_p">Top P:</label>
+                <input type="number" id="top_p" name="top_p" value="{{ session['top_p'] }}" min="0" max="1" step="0.1"><br>
+
+                <label for="embedding_hist">Embedding History</label>
+                <input type="number" id="embedding_hist" name="embedding_hist" value="{{ session['embedding_hist'] }}" min="0" max="20" step="1"><br>
+
+                <label for="chat_mode">Chat Mode</label>
+                <input type="checkbox" id="chat_mode" name="remove_history" {% if session['chat_mode'] %} checked {% endif %}><br>
+
+                <label for="new_chat">New Chat</label>
+                <input type="checkbox" id="new_chat" name="remove_history" {% if session['new_chat'] %} checked {% endif %}><br>
+
+            </div>
+        </div>
+          <h3>Enter your message:</h3>
+          <textarea name="message" id="message" rows="4" cols="50"></textarea>
+          <br>
+          <button id="submit_button">Submit</button>
+    </div>
+
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var assistantText = "";
+
+        socket.on('connect', function() {
+            socket.emit('send_message', {data: 'I\'m connected!'});
+        });
+
+        socket.on('new_response_increment', function(data) {
+            assistantText += data.data;
+            assistantText = assistantText.replace(/\n/g, '<br>');
+            let lastAssistantElement = document.querySelector('.assistant-font:last-child');
+            if (lastAssistantElement) {
+                lastAssistantElement.innerHTML = `<b>Assistant:</b> ${assistantText}`;
+            } else {
+                appendMessage("Assistant", assistantText, "assistant-font");
+            }
+
+            // Scroll to the bottom
+            chatbox.scrollTop = chatbox.scrollHeight;
+        });
+
+        document.getElementById("submit_button").addEventListener("click", function() {
+            var message = document.getElementById("message").value;
+            var sessionId = document.getElementById("session_id").value;
+            var systemMessage = document.getElementById("system_message").value;
+            var temperature = document.getElementById("temperature").value;
+            var maxLength = document.getElementById("max_length").value;
+            var topK = document.getElementById("top_k").value;
+            var topP = document.getElementById("top_p").value;
+            var newChat = document.getElementById("new_chat").checked;
+            var chatMode = document.getElementById("chat_mode").checked;
+            var embeddingHist = document.getElementById("embedding_hist").value;
+
+            // Package these into an object to send
+            var payload = {
+                message: message,
+                sessionId: sessionId,
+                systemMessage: systemMessage,
+                temperature: temperature,
+                maxLength: maxLength,
+                topK: topK,
+                topP: topP,
+                newChat: newChat,
+                chatMode: chatMode,
+                embeddingHist: embeddingHist
+            };
+
+
+            appendMessage("User", message, "user-font");
+            socket.emit('send_message', payload);
+            assistantText = ""; // 清空assistantText以便接收新消息
+            // Clear the textarea
+            document.getElementById("message").value = "";
+        });
+
+        function appendMessage(sender, text, cssClass) {
+            var p = document.createElement('p');
+            p.innerHTML = `<b>${sender}:</b> ${text}`;
+            p.className = cssClass;
+            var chatbox = document.getElementById('chatbox');
+            chatbox.appendChild(p);
+            chatbox.scrollTop = chatbox.scrollHeight;
+            return p;
+        }
+
+    </script>
+
+</body>
+</html>
