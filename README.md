@@ -1,4 +1,5 @@
 # llama2-local-faiss-knowledge-chat-bot
+# The Extreme Pro Max Ultra Plus Super local Chatbot
 
 first create source_files folder, put your pdfs, txts, etc, supported file types:
 document_loader_map = {
