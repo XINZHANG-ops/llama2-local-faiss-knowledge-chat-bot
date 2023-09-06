@@ -15,9 +15,8 @@ from settings import (chunk_size,
                       metric,
                       dimension
                       )
-
-logging.basicConfig(level=logging.INFO)
-
+logging.basicConfig(level=logging.WARNING)
+logging.getLogger('sentence_transformers').setLevel(logging.WARNING)
 processed_track_file = 'processed_files.txt'
 
 

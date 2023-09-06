@@ -2,7 +2,7 @@
 Chat_Data/
 paper_embeddings/
 source_files/
-
+processed_files.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

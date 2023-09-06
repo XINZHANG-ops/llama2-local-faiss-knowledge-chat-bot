@@ -2,6 +2,7 @@ import torch
 from transformers import (
     BitsAndBytesConfig
 )
+# https://github.com/huggingface/transformers/blob/ccb92be23def445f2afdea94c31286f84b89eb5b/src/transformers/generation/streamers.py#L159
 from transformers import (AutoConfig, AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer)
 from typing import Iterator
 from threading import Thread

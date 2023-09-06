@@ -1,4 +1,7 @@
 import os
+import logging
+logging.basicConfig(level=logging.WARNING)
+logging.getLogger('sentence_transformers').setLevel(logging.WARNING)
 from sentence_transformers import SentenceTransformer
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.document_loaders import CSVLoader, PDFMinerLoader, TextLoader, UnstructuredExcelLoader, Docx2txtLoader
