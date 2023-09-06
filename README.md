@@ -24,6 +24,6 @@ query.py is not used, settings.py is for settings for embedding and model
 
 
 
-
+# if you on windows, need to run these  
 pip install git+https://github.com/huggingface/transformers.git   
 python -m pip install bitsandbytes --prefer-binary --extra-index-url=https://jllllll.github.io/bitsandbytes-windows-webui
