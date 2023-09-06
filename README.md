@@ -21,3 +21,9 @@ then run ingest.py, this will convert all your files as a faiss vector db, for f
 then run model_app.py, this will start the llama2 model enable to chat, you can select chat mode or not to chat with the vector db or not
 
 query.py is not used, settings.py is for settings for embedding and model
+
+
+
+
+pip install git+https://github.com/huggingface/transformers.git
+python -m pip install bitsandbytes --prefer-binary --extra-index-url=https://jllllll.github.io/bitsandbytes-windows-webui
