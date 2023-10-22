@@ -7,7 +7,7 @@ from transformers import (AutoConfig, AutoModelForCausalLM, AutoTokenizer, TextI
 from typing import Iterator
 from threading import Thread
 # from huggingface_hub import login
-# login(token="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")
+# login(token="your hf token")
 
 class llama2:
     def __init__(self, model_id):
